@@ -51,7 +51,6 @@
   <ItemGroup>
     <Compile Include="AVLTree.cs" />
     <Compile Include="Node.cs" />
-    <Compile Include="BaseTree.cs" />
     <Compile Include="DrawBox.cs">
       <SubType>Component</SubType>
     </Compile>

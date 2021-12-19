@@ -1,33 +1,46 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace TreeVisualizer
 {
-    public class AVLTree<TValue> : BaseTree<TValue> where TValue : IComparable<TValue>
+    public class AVLTree
     {
+        protected TreeConfiguration _configuration;
+        protected Node _root;
+
         public AVLTree(TreeConfiguration configuration)
-            : base(configuration)
         {
             _configuration = configuration;
         }
 
-        public override void Insert(TValue value)
+        public void Insert(int value)
         {
             _root = Insert(_root, value);
         }
 
-        public override void Remove(TValue value)
+        public void Remove(int value)
         {
             _root = Remove(_root, value);
         }
 
+        public void Search(int key)
+        {
+            if (Search(_root, key) != null)
+            {
+                MessageBox.Show("Узел со значением " + key + " присутствует в дереве", "Успех");
+            }
+            else
+            {
+                MessageBox.Show("Узел со значением " + key + " отсутствует в дереве", "Неуспех");
+            }
+        }
 
-
-        private Node<TValue> Insert(Node<TValue> root, TValue value)
+        private Node Insert(Node root, int value)
         {
             if (root == null)
-                root = new Node<TValue>(value);
+                root = new Node(value);
 
             else if (root.Value.CompareTo(value) > 0)
             {
@@ -42,7 +55,7 @@ namespace TreeVisualizer
             return root;
         }
 
-        private Node<TValue> Remove(Node<TValue> root, TValue value)
+        private Node Remove(Node root, int value)
         {
             if (root == null)
                 return root;
@@ -72,7 +85,7 @@ namespace TreeVisualizer
 
             else
             {
-                Node<TValue> parent;
+                Node parent;
                 if (root.Right != null)
                 {
                     parent = root.Right;
@@ -96,11 +109,35 @@ namespace TreeVisualizer
             return root;
         }
 
-
-
-        public override IEnumerable<NodeInfo> GetAllNodes()
+        private Node Search(Node root, int value)
         {
-            var nodeCollection = new List<Node<TValue>>();
+            if (root == null)
+                return null;
+
+            if (value < root.Value)
+            {
+                if (value == root.Value)
+                {
+                    return root;
+                }
+                else
+                    return Search(root.Left, value);
+            }
+            else
+            {
+                if (value == root.Value)
+                {
+                    return root;
+                }
+                else
+                    return Search(root.Right, value);
+            }
+        }
+
+
+        public IEnumerable<NodeInfo> GetAllNodes()
+        {
+            var nodeCollection = new List<Node>();
 
             GetAllNodes(_root, nodeCollection);
 
@@ -125,7 +162,7 @@ namespace TreeVisualizer
             return nodeInfos.Values;
         }
 
-        private Node<TValue> BalanceTree(Node<TValue> root)
+        private Node BalanceTree(Node root)
         {
             int balanceFactor = GetBalanceFactor(root);
             if (balanceFactor > 1)
@@ -145,7 +182,7 @@ namespace TreeVisualizer
             return root;
         }
 
-        private int GetBalanceFactor(Node<TValue> root)
+        private int GetBalanceFactor(Node root)
         {
             int left = GetHeight(root.Left);
             int right = GetHeight(root.Right);
@@ -153,7 +190,7 @@ namespace TreeVisualizer
             return factor;
         }
 
-        private int GetHeight(Node<TValue> root)
+        private int GetHeight(Node root)
         {
             int height = 0;
             if (root != null)
@@ -171,34 +208,125 @@ namespace TreeVisualizer
             return left > right ? left : right;
         }
 
-        private Node<TValue> RotateRR(Node<TValue> parent)
+        private Node RotateRR(Node parent)
         {
-            Node<TValue> pivot = parent.Right;
+            Node pivot = parent.Right;
             parent.Right = pivot.Left;
             pivot.Left = parent;
             return pivot;
         }
 
-        private Node<TValue> RotateLL(Node<TValue> parent)
+        private Node RotateLL(Node parent)
         {
-            Node<TValue> pivot = parent.Left;
+            Node pivot = parent.Left;
             parent.Left = pivot.Right;
             pivot.Right = parent;
             return pivot;
         }
 
-        private Node<TValue> RotateLR(Node<TValue> parent)
+        private Node RotateLR(Node parent)
         {
-            Node<TValue> pivot = parent.Left;
+            Node pivot = parent.Left;
             parent.Left = RotateRR(pivot);
             return RotateLL(parent);
         }
 
-        private Node<TValue> RotateRL(Node<TValue> parent)
+        private Node RotateRL(Node parent)
         {
-            Node<TValue> pivot = parent.Right;
+            Node pivot = parent.Right;
             parent.Right = RotateLL(pivot);
             return RotateRR(parent);
+        }
+
+
+
+        protected int CalculateNodePositions(Node root, IDictionary<Node, NodeInfo> nodeInfos, int offset, int depth)
+        {
+            if (root == null)
+            {
+                return 0;
+            }
+
+            int circleDiameterOffset = _configuration.CircleDiameter - (int)(_configuration.CircleDiameter / Math.PI);
+
+            int left = CalculateNodePositions(root.Left, nodeInfos, offset, depth + 1);
+            int right = CalculateNodePositions(root.Right, nodeInfos, offset + left + circleDiameterOffset, depth + 1);
+
+            nodeInfos[root].Position =
+                new Position
+                {
+                    Y = depth * _configuration.CircleDiameter,
+                    X = left + offset
+                };
+            return left + right + circleDiameterOffset;
+        }
+
+        protected void AggregateChildNotePositions(Node root, Node parent, IDictionary<Node, NodeInfo> nodeInfos)
+        {
+            if (root == null)
+            {
+                return;
+            }
+
+            AggregateChildNotePositions(root.Left, root, nodeInfos);
+            AggregateChildNotePositions(root.Right, root, nodeInfos);
+
+            if (parent != null)
+            {
+                nodeInfos[root].IsRightChild = parent.Right == root;
+                nodeInfos[root].IsLeftChild = parent.Left == root;
+            }
+
+            if (root.Left != null)
+                nodeInfos[root].LeftChildPosition =
+                    new Position
+                    {
+                        X = nodeInfos[root.Left].Position.X,
+                        Y = nodeInfos[root.Left].Position.Y
+                    };
+            if (root.Right != null)
+                nodeInfos[root].RightChildPosition =
+                    new Position
+                    {
+                        X = nodeInfos[root.Right].Position.X,
+                        Y = nodeInfos[root.Right].Position.Y
+                    };
+        }
+
+        protected void GetAllNodes(Node root, ICollection<Node> collection)
+        {
+            if (root == null)
+            {
+                return;
+            }
+            collection.Add(root);
+            GetAllNodes(root.Left, collection);
+            GetAllNodes(root.Right, collection);
+        }
+
+        protected Node GetMinValueNode(Node root)
+        {
+            Node currentNode = root;
+            while (currentNode != null && currentNode.Left != null)
+            {
+                currentNode = currentNode.Left;
+            }
+            return currentNode;
+        }
+
+        protected Node GetMaxValueNode(Node root)
+        {
+            Node currentNode = root;
+            while (currentNode != null && currentNode.Right != null)
+            {
+                currentNode = currentNode.Right;
+            }
+            return currentNode;
+        }
+
+        public TreeConfiguration GetConfiguration()
+        {
+            return _configuration;
         }
     }
 }

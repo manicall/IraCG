@@ -2,14 +2,11 @@
 {
     public class TreeConfiguration
     {
-        public TreeConfiguration(int circleDiameter, int arrowAnchorSize)
+        public TreeConfiguration(int circleDiameter)
         {
             CircleDiameter = circleDiameter;
-            ArrowAnchorSize = arrowAnchorSize;
         }
 
         public int CircleDiameter { get; private set; }
-
-        public int ArrowAnchorSize { get; private set; }
     }
 }

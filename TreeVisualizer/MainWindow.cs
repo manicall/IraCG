@@ -6,7 +6,7 @@ namespace TreeVisualizer
 {
     public partial class MainWindow : Form
     {
-        private ITree<int> _avlTree;
+        private AVLTree _avlTree;
 
         public MainWindow()
         {
@@ -15,15 +15,15 @@ namespace TreeVisualizer
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            _avlTree = new AVLTree<int>(new TreeConfiguration(circleDiameter: 45, arrowAnchorSize: 5));
+            _avlTree = new AVLTree(new TreeConfiguration(circleDiameter: 45));
         }
 
         private void btn_Insert_Click(object sender, EventArgs e)
         {
-            if ( CheckValidate())
+            if (CheckValidate())
             {
                 _avlTree.Insert(int.Parse(txt.Text));
-                drawBox.Print<AVLTree<int>>(_avlTree);
+                drawBox.Print(_avlTree);
             }
         }
 
@@ -32,13 +32,16 @@ namespace TreeVisualizer
             if (CheckValidate())
             {
                 _avlTree.Remove(int.Parse(txt.Text));
-                drawBox.Print<AVLTree<int>>(_avlTree);
+                drawBox.Print(_avlTree);
             }
         }
 
         private void btn_Search_Click(object sender, EventArgs e)
         {
-
+            if (CheckValidate())
+            {
+                _avlTree.Search(int.Parse(txt.Text));
+            }
         }
 
         private bool CheckValidate() {

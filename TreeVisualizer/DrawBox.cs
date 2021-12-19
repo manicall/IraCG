@@ -20,8 +20,7 @@ namespace TreeVisualizer
                 true);
         }
 
-        public void Print<TTree>(ITree tree)
-            where TTree : ITree
+        public void Print(AVLTree tree)
         {
             _treeNodes = tree.GetAllNodes();
             _configuration = tree.GetConfiguration();
@@ -56,9 +55,9 @@ namespace TreeVisualizer
         private void DrawConnectionArrow(Position fromNodePosition, Position toNodePosition, int offset, Graphics grapics)
         {
             GraphicsPath capPath = new GraphicsPath();
-            capPath.AddLine(_configuration.ArrowAnchorSize * -1, 0, _configuration.ArrowAnchorSize, 0);
-            capPath.AddLine(_configuration.ArrowAnchorSize * -1, 0, 0, _configuration.ArrowAnchorSize);
-            capPath.AddLine(0, _configuration.ArrowAnchorSize, _configuration.ArrowAnchorSize, 0);
+            //capPath.AddLine(_configuration.ArrowAnchorSize * -1, 0, _configuration.ArrowAnchorSize, 0);
+            //capPath.AddLine(_configuration.ArrowAnchorSize * -1, 0, 0, _configuration.ArrowAnchorSize);
+            //capPath.AddLine(0, _configuration.ArrowAnchorSize, _configuration.ArrowAnchorSize, 0);
             Pen linePen = new Pen(Color.Black, 1)
             {
                 CustomEndCap = new CustomLineCap(null, capPath, LineCap.ArrowAnchor)
@@ -78,7 +77,7 @@ namespace TreeVisualizer
             grapics.DrawLine(
                 linePen,
                 startPoint,
-                GeometryHelper.CalculatePoint(startPoint, endPoint, GeometryHelper.GetDistance(startPoint, endPoint) - _configuration.ArrowAnchorSize - _configuration.CircleDiameter / 2)
+                GeometryHelper.CalculatePoint(startPoint, endPoint, GeometryHelper.GetDistance(startPoint, endPoint) - _configuration.CircleDiameter / 2)
             );
         }
 

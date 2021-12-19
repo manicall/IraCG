@@ -2,17 +2,17 @@
 
 namespace TreeVisualizer
 {
-    public class Node<TValue> where TValue : IComparable<TValue>
+    public class Node
     {
-        public Node(TValue value)
+        public Node(int value)
         {
             Value = value;
         }
 
-        public Node<TValue> Left { get; set; }
+        public Node Left { get; set; }
 
-        public Node<TValue> Right { get; set; }
+        public Node Right { get; set; }
 
-        public TValue Value { get; set; }
+        public int Value { get; set; }
     }
 }

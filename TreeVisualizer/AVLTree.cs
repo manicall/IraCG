@@ -143,7 +143,7 @@ namespace TreeVisualizer
                 x => x,
                 y => new NodeInfo
                 {
-                    IsBstNode = false,
+                    //IsBstNode = false,
                     IsAvlNode = true,
                     Value = y.Value.ToString(),
                     IsLeaf = y.Left == null && y.Right == null

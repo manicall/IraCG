@@ -9,16 +9,14 @@ namespace TreeVisualizer
 {
     public class DrawBox : PictureBox
     {
+        // набор вершин в дереве
         private IEnumerable<NodeInfo> _treeNodes;
+        // содержит размер вершины в отображаемом дереве
         private TreeConfiguration _configuration;
-        private Node searchedRoot = null;
 
         public DrawBox()
         {
-/*            SetStyle(
-                ControlStyles.OptimizedDoubleBuffer |
-                ControlStyles.DoubleBuffer,
-                true);*/
+
         }
 
         public void Print(AVLTree tree)

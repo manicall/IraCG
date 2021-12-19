@@ -12,7 +12,7 @@ namespace TreeVisualizer
         public Node Left { get; set; }
 
         public Node Right { get; set; }
-
+        // значение вершины
         public int Value { get; set; }
     }
 }

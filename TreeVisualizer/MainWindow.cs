@@ -33,6 +33,8 @@ namespace TreeVisualizer
                 // отрисовка дерева на форме
                 drawBox.Print(avlTree);
             }
+            // установка фокуса на текстовое поле
+            txt.Focus();
         }
 
         private void btn_Remove_Click(object sender, EventArgs e)
@@ -47,15 +49,17 @@ namespace TreeVisualizer
                 avlTree.Remove(int.Parse(txt.Text));
                 drawBox.Print(avlTree);
             }
+            txt.Focus();
         }
-
 
         private void btn_Search_Click(object sender, EventArgs e)
         {
             if (CheckValidate())
             {
-                avlTree.SearchWithMessage(int.Parse(txt.Text));
+                avlTree.Search(int.Parse(txt.Text));
+                drawBox.Print(avlTree);
             }
+            txt.Focus();
         }
 
         // проверка на ввод числа в текстовое поле

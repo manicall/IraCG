@@ -30,16 +30,9 @@ namespace TreeVisualizer
             return Search(root, value) != null;
         }
 
-        public void SearchWithMessage(int value)
+        public void Search(int value)
         {
-            if (Search(root, value) != null)
-            {
-                MessageBox.Show("Узел со значением " + value + " присутствует в дереве", "Успех");
-            }
-            else
-            {
-                MessageBox.Show("Узел со значением " + value + " отсутствует в дереве", "Неуспех");
-            }
+            configuration.NodeForSearch = Search(root, value);
         }
 
         private Node Insert(Node root, int value)
@@ -133,6 +126,7 @@ namespace TreeVisualizer
                     return Search(root.Right, value);
             }
         }
+
         public IEnumerable<NodeInfo> GetAllNodes()
         {
             var nodeCollection = new List<Node>();
@@ -143,20 +137,13 @@ namespace TreeVisualizer
                 x => x,
                 y => new NodeInfo
                 {
-                    //IsBstNode = false,
-                    IsAvlNode = true,
-                    Value = y.Value.ToString(),
-                    IsLeaf = y.Left == null && y.Right == null
+                    Value = y.Value.ToString()
                 }
             );
 
             CalculateNodePositions(root, nodeInfos, offset: 0, depth: 0);
             AggregateChildNotePositions(root, null, nodeInfos);
 
-            foreach (var node in nodeCollection)
-            {
-                nodeInfos[node].Height = GetHeight(node);
-            }
             return nodeInfos.Values;
         }
 
@@ -265,11 +252,6 @@ namespace TreeVisualizer
             AggregateChildNotePositions(root.Left, root, nodeInfos);
             AggregateChildNotePositions(root.Right, root, nodeInfos);
 
-            if (parent != null)
-            {
-                nodeInfos[root].IsRightChild = parent.Right == root;
-                nodeInfos[root].IsLeftChild = parent.Left == root;
-            }
 
             if (root.Left != null)
                 nodeInfos[root].LeftChildPosition =

@@ -44,15 +44,15 @@ namespace TreeVisualizer
             foreach (var node in _treeNodes)
             {
                 if (node.LeftChildPosition != null)
-                    DrawConnectionArrow(node.Position, node.LeftChildPosition, baseOffset, pe.Graphics);
+                    DrawConnectionLine(node.Position, node.LeftChildPosition, baseOffset, pe.Graphics);
                 if (node.RightChildPosition != null)
-                    DrawConnectionArrow(node.Position, node.RightChildPosition, baseOffset, pe.Graphics);
+                    DrawConnectionLine(node.Position, node.RightChildPosition, baseOffset, pe.Graphics);
 
                 DrawNode(node, baseOffset, pe.Graphics);
             }
         }
 
-        private void DrawConnectionArrow(Position fromNodePosition, Position toNodePosition, int offset, Graphics grapics)
+        private void DrawConnectionLine(Position fromNodePosition, Position toNodePosition, int offset, Graphics grapics)
         {
             // перо отрисовывающее линию
             Pen linePen = new Pen(Color.Black, 1);
@@ -72,13 +72,12 @@ namespace TreeVisualizer
             grapics.DrawLine(
                 linePen,
                 startPoint,
-                GeometryHelper.CalculatePoint(startPoint, endPoint, GeometryHelper.GetDistance(startPoint, endPoint) - _configuration.CircleDiameter / 2)
+                endPoint
             );
         }
 
         private void DrawNode(NodeInfo node, int offset, Graphics grapics)
         {
-
             // заполнение круга
             grapics.FillEllipse(
                 new SolidBrush(Color.White),
@@ -88,9 +87,21 @@ namespace TreeVisualizer
                 _configuration.CircleDiameter
                 );
 
+            Pen pen;
+
+            if (_configuration.NodeForSearch != null && int.Parse(node.Value) == _configuration.NodeForSearch.Value)
+            {
+                pen = new Pen(Color.Red, 1);
+                _configuration.NodeForSearch = null;
+            }
+            else
+            {
+                pen = new Pen(Color.Black, 1);    
+            }
+
             // отрисовка круга
             grapics.DrawEllipse(
-                new Pen(Color.Black, 1),
+                pen,
                 node.Position.X + offset,
                 node.Position.Y,
                 _configuration.CircleDiameter,

@@ -55,7 +55,6 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="GeometryHelper.cs" />
-    <Compile Include="ITree.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>

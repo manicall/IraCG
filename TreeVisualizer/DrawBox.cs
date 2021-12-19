@@ -11,13 +11,14 @@ namespace TreeVisualizer
     {
         private IEnumerable<NodeInfo> _treeNodes;
         private TreeConfiguration _configuration;
+        private Node searchedRoot = null;
 
         public DrawBox()
         {
-            SetStyle(
+/*            SetStyle(
                 ControlStyles.OptimizedDoubleBuffer |
                 ControlStyles.DoubleBuffer,
-                true);
+                true);*/
         }
 
         public void Print(AVLTree tree)
@@ -25,22 +26,23 @@ namespace TreeVisualizer
             _treeNodes = tree.GetAllNodes();
             _configuration = tree.GetConfiguration();
 
+            // очищает поле отрисовки и вызывает OnPaint
             Invalidate();
         }
 
         protected override void OnPaint(PaintEventArgs pe)
         {
+            // если в дереве нет вершин
             if (_treeNodes == null)
             {
                 return;
             }
 
+            // сглаживание отрисовки
             pe.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-
-            base.OnPaint(pe);
-
+            // для вывода отображаемого дерева по центру формы
             int baseOffset = Width / 2 - _configuration.CircleDiameter / 2 - _treeNodes.FirstOrDefault()?.Position.X ?? default;
-
+            // отрисовка всех вершин и соединяющих линий
             foreach (var node in _treeNodes)
             {
                 if (node.LeftChildPosition != null)
@@ -54,26 +56,21 @@ namespace TreeVisualizer
 
         private void DrawConnectionArrow(Position fromNodePosition, Position toNodePosition, int offset, Graphics grapics)
         {
-            GraphicsPath capPath = new GraphicsPath();
-            //capPath.AddLine(_configuration.ArrowAnchorSize * -1, 0, _configuration.ArrowAnchorSize, 0);
-            //capPath.AddLine(_configuration.ArrowAnchorSize * -1, 0, 0, _configuration.ArrowAnchorSize);
-            //capPath.AddLine(0, _configuration.ArrowAnchorSize, _configuration.ArrowAnchorSize, 0);
-            Pen linePen = new Pen(Color.Black, 1)
-            {
-                CustomEndCap = new CustomLineCap(null, capPath, LineCap.ArrowAnchor)
-            };
-
+            // перо отрисовывающее линию
+            Pen linePen = new Pen(Color.Black, 1);
+            // центр вершины, от которой нужно провести линию
             var startPoint = new Point
             {
                 X = fromNodePosition.X + _configuration.CircleDiameter / 2 + offset,
                 Y = fromNodePosition.Y + _configuration.CircleDiameter / 2
             };
+            // центр вершины, до которой нужно провести линию
             var endPoint = new Point
             {
                 X = toNodePosition.X + _configuration.CircleDiameter / 2 + offset,
                 Y = toNodePosition.Y + _configuration.CircleDiameter / 2
             };
-
+            // отрисовка линии
             grapics.DrawLine(
                 linePen,
                 startPoint,
@@ -83,42 +80,35 @@ namespace TreeVisualizer
 
         private void DrawNode(NodeInfo node, int offset, Graphics grapics)
         {
+
+            // заполнение круга
             grapics.FillEllipse(
-                PensAndStuff.CircleBrush,
+                new SolidBrush(Color.White),
                 node.Position.X + offset,
                 node.Position.Y,
                 _configuration.CircleDiameter,
                 _configuration.CircleDiameter
                 );
 
+            // отрисовка круга
             grapics.DrawEllipse(
-                PensAndStuff.CirclePen,
+                new Pen(Color.Black, 1),
                 node.Position.X + offset,
                 node.Position.Y,
                 _configuration.CircleDiameter,
                 _configuration.CircleDiameter
                 );
 
+            // вычисление размера текста
             var stringSize = grapics.MeasureString(node.Value, DefaultFont);
-
+            // запись текста в круг
             grapics.DrawString(
                 node.Value,
                 DefaultFont,
-                PensAndStuff.TextBrush,
+                new SolidBrush(Color.Black),
                 node.Position.X + (_configuration.CircleDiameter / 2) - (stringSize.Width / 2) + 1 + offset,
                 node.Position.Y + (_configuration.CircleDiameter / 2) - (stringSize.Height / 2) + 1
                 );
-
-            if (node.IsAvlNode)
-            {
-                grapics.DrawString(
-                    node.Height.ToString(),
-                    new Font(DefaultFont.FontFamily, 7f),
-                    PensAndStuff.TextBrush,
-                    node.IsLeftChild ? node.Position.X - 8f + offset : node.Position.X + _configuration.CircleDiameter + offset,
-                    node.Position.Y
-                    );
-            }
         }
     }
 }

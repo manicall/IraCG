@@ -129,6 +129,7 @@ namespace TreeVisualizer
             // 
             // drawBox
             // 
+            this.drawBox.BackColor = System.Drawing.SystemColors.ControlLightLight;
             this.drawBox.Location = new System.Drawing.Point(3, 3);
             this.drawBox.Name = "drawBox";
             this.drawBox.Size = new System.Drawing.Size(975, 511);

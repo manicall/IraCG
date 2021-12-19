@@ -6,7 +6,7 @@ namespace TreeVisualizer
 {
     public partial class MainWindow : Form
     {
-        private AVLTree _avlTree;
+        private AVLTree avlTree;
 
         public MainWindow()
         {
@@ -15,15 +15,23 @@ namespace TreeVisualizer
 
         private void MainWindow_Load(object sender, EventArgs e)
         {
-            _avlTree = new AVLTree(new TreeConfiguration(circleDiameter: 45));
+            avlTree = new AVLTree(new TreeConfiguration(circleDiameter: 45));
         }
 
         private void btn_Insert_Click(object sender, EventArgs e)
         {
             if (CheckValidate())
             {
-                _avlTree.Insert(int.Parse(txt.Text));
-                drawBox.Print(_avlTree);
+                // hasValue - не дает добавить элемент, если такой уже есть
+                if (avlTree.hasValue(int.Parse(txt.Text)))
+                {
+                    MessageBox.Show("Элемент уже присутствует в дереве", "Ошибка добавления");
+                    return;
+                }
+                // вставка элемента в дерево
+                avlTree.Insert(int.Parse(txt.Text));
+                // отрисовка дерева на форме
+                drawBox.Print(avlTree);
             }
         }
 
@@ -31,19 +39,26 @@ namespace TreeVisualizer
         {
             if (CheckValidate())
             {
-                _avlTree.Remove(int.Parse(txt.Text));
-                drawBox.Print(_avlTree);
+                if (!avlTree.hasValue(int.Parse(txt.Text)))
+                {
+                    MessageBox.Show("Элемент отсутсвует в дереве", "Ошибка удаления");
+                    return;
+                }
+                avlTree.Remove(int.Parse(txt.Text));
+                drawBox.Print(avlTree);
             }
         }
+
 
         private void btn_Search_Click(object sender, EventArgs e)
         {
             if (CheckValidate())
             {
-                _avlTree.Search(int.Parse(txt.Text));
+                avlTree.SearchWithMessage(int.Parse(txt.Text));
             }
         }
 
+        // проверка на ввод числа в текстовое поле
         private bool CheckValidate() {
             if (string.IsNullOrEmpty(txt.Text))
             {

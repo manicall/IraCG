@@ -1,6 +1,6 @@
 ﻿using System.Drawing;
 
-namespace TreeVisualizer
+/*namespace TreeVisualizer
 {
     public class PensAndStuff
     {
@@ -11,3 +11,4 @@ namespace TreeVisualizer
         public static Brush TextBrush = new SolidBrush(Color.Black);
     }
 }
+*/

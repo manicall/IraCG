@@ -7,33 +7,38 @@ namespace TreeVisualizer
 {
     public class AVLTree
     {
-        protected TreeConfiguration _configuration;
-        protected Node _root;
+        protected TreeConfiguration configuration;
+        protected Node root;
 
         public AVLTree(TreeConfiguration configuration)
         {
-            _configuration = configuration;
+            this.configuration = configuration;
         }
 
         public void Insert(int value)
         {
-            _root = Insert(_root, value);
+            root = Insert(root, value);
         }
 
         public void Remove(int value)
         {
-            _root = Remove(_root, value);
+            root = Remove(root, value);
         }
 
-        public void Search(int key)
+        public bool hasValue(int value)
         {
-            if (Search(_root, key) != null)
+            return Search(root, value) != null;
+        }
+
+        public void SearchWithMessage(int value)
+        {
+            if (Search(root, value) != null)
             {
-                MessageBox.Show("Узел со значением " + key + " присутствует в дереве", "Успех");
+                MessageBox.Show("Узел со значением " + value + " присутствует в дереве", "Успех");
             }
             else
             {
-                MessageBox.Show("Узел со значением " + key + " отсутствует в дереве", "Неуспех");
+                MessageBox.Show("Узел со значением " + value + " отсутствует в дереве", "Неуспех");
             }
         }
 
@@ -109,37 +114,30 @@ namespace TreeVisualizer
             return root;
         }
 
-        private Node Search(Node root, int value)
+        public Node Search(Node root, int value)
         {
             if (root == null)
                 return null;
-
             if (value < root.Value)
             {
                 if (value == root.Value)
-                {
                     return root;
-                }
                 else
                     return Search(root.Left, value);
             }
             else
             {
-                if (value == root.Value)
-                {
+                if (value == root.Value)        
                     return root;
-                }
                 else
                     return Search(root.Right, value);
             }
         }
-
-
         public IEnumerable<NodeInfo> GetAllNodes()
         {
             var nodeCollection = new List<Node>();
 
-            GetAllNodes(_root, nodeCollection);
+            GetAllNodes(root, nodeCollection);
 
             var nodeInfos = nodeCollection.ToDictionary(
                 x => x,
@@ -152,8 +150,8 @@ namespace TreeVisualizer
                 }
             );
 
-            CalculateNodePositions(_root, nodeInfos, offset: 0, depth: 0);
-            AggregateChildNotePositions(_root, null, nodeInfos);
+            CalculateNodePositions(root, nodeInfos, offset: 0, depth: 0);
+            AggregateChildNotePositions(root, null, nodeInfos);
 
             foreach (var node in nodeCollection)
             {
@@ -238,16 +236,13 @@ namespace TreeVisualizer
             return RotateRR(parent);
         }
 
-
-
         protected int CalculateNodePositions(Node root, IDictionary<Node, NodeInfo> nodeInfos, int offset, int depth)
         {
             if (root == null)
-            {
                 return 0;
-            }
+            
 
-            int circleDiameterOffset = _configuration.CircleDiameter - (int)(_configuration.CircleDiameter / Math.PI);
+            int circleDiameterOffset = configuration.CircleDiameter - (int)(configuration.CircleDiameter / Math.PI);
 
             int left = CalculateNodePositions(root.Left, nodeInfos, offset, depth + 1);
             int right = CalculateNodePositions(root.Right, nodeInfos, offset + left + circleDiameterOffset, depth + 1);
@@ -255,7 +250,7 @@ namespace TreeVisualizer
             nodeInfos[root].Position =
                 new Position
                 {
-                    Y = depth * _configuration.CircleDiameter,
+                    Y = depth * configuration.CircleDiameter,
                     X = left + offset
                 };
             return left + right + circleDiameterOffset;
@@ -263,10 +258,9 @@ namespace TreeVisualizer
 
         protected void AggregateChildNotePositions(Node root, Node parent, IDictionary<Node, NodeInfo> nodeInfos)
         {
-            if (root == null)
-            {
+            if (root == null)  
                 return;
-            }
+           
 
             AggregateChildNotePositions(root.Left, root, nodeInfos);
             AggregateChildNotePositions(root.Right, root, nodeInfos);
@@ -296,37 +290,17 @@ namespace TreeVisualizer
         protected void GetAllNodes(Node root, ICollection<Node> collection)
         {
             if (root == null)
-            {
                 return;
-            }
+            
             collection.Add(root);
             GetAllNodes(root.Left, collection);
             GetAllNodes(root.Right, collection);
         }
 
-        protected Node GetMinValueNode(Node root)
-        {
-            Node currentNode = root;
-            while (currentNode != null && currentNode.Left != null)
-            {
-                currentNode = currentNode.Left;
-            }
-            return currentNode;
-        }
-
-        protected Node GetMaxValueNode(Node root)
-        {
-            Node currentNode = root;
-            while (currentNode != null && currentNode.Right != null)
-            {
-                currentNode = currentNode.Right;
-            }
-            return currentNode;
-        }
-
         public TreeConfiguration GetConfiguration()
         {
-            return _configuration;
+            return configuration;
         }
+        
     }
 }

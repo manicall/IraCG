@@ -20,37 +20,39 @@ namespace TreeVisualizer
 
         private void btn_Insert_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txt.Text))
+            if ( CheckValidate())
             {
-                MessageBox.Show("You forgot to enter a value ;)", "Reminder");
-                return;
+                _avlTree.Insert(int.Parse(txt.Text));
+                drawBox.Print<AVLTree<int>>(_avlTree);
             }
-            if (!int.TryParse(txt.Text, out int value))
-            {
-                MessageBox.Show($"Expected value type of {typeof(int)}", "Error");
-                return;
-            }
-            _avlTree.Insert(value);
-            drawBox.Print<AVLTree<int>>(_avlTree);
-            
         }
 
         private void btn_Remove_Click(object sender, EventArgs e)
         {
+            if (CheckValidate())
+            {
+                _avlTree.Remove(int.Parse(txt.Text));
+                drawBox.Print<AVLTree<int>>(_avlTree);
+            }
+        }
+
+        private void btn_Search_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private bool CheckValidate() {
             if (string.IsNullOrEmpty(txt.Text))
             {
-                MessageBox.Show("You forgot to enter a value ;)", "Reminder");
-                return;
+                MessageBox.Show("Поле для ввода не может быть пустым", "Ошибка ввода");
+                return false;
             }
             if (!int.TryParse(txt.Text, out int value))
             {
-                MessageBox.Show($"Expected value type of {typeof(int)}", "Error");
-                return;
+                MessageBox.Show("Ожидалось целое число", "Ошибка ввода");
+                return false;
             }
-            _avlTree.Remove(value);
-            drawBox.Print<AVLTree<int>>(_avlTree);
-            
+            return true;
         }
-
     }
 }

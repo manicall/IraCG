@@ -93,6 +93,7 @@ namespace TreeVisualizer
             this.btn_Search.TabIndex = 3;
             this.btn_Search.Text = "Найти";
             this.btn_Search.UseVisualStyleBackColor = true;
+            this.btn_Search.Click += new System.EventHandler(this.btn_Search_Click);
             // 
             // txt
             // 
@@ -141,6 +142,7 @@ namespace TreeVisualizer
             this.ClientSize = new System.Drawing.Size(981, 598);
             this.Controls.Add(this.tableLayoutPanel);
             this.DoubleBuffered = true;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "MainWindow";
             this.Text = "MainWindow";

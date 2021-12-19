@@ -22,6 +22,8 @@ namespace TreeVisualizer
             _root = Remove(_root, value);
         }
 
+
+
         private Node<TValue> Insert(Node<TValue> root, TValue value)
         {
             if (root == null)
@@ -67,6 +69,7 @@ namespace TreeVisualizer
                         root = RotateLR(root);
                 }
             }
+
             else
             {
                 Node<TValue> parent;
@@ -92,6 +95,8 @@ namespace TreeVisualizer
             }
             return root;
         }
+
+
 
         public override IEnumerable<NodeInfo> GetAllNodes()
         {
